@@ -1,5 +1,5 @@
 var restify = require('restify');
-var datastreams = [];
+var datastreams = {};
 
 var server = restify.createServer();
 server.use(restify.acceptParser(server.acceptable));
@@ -17,8 +17,7 @@ server.head('/', respond);
 server.get('/datastreams/', respond);
 server.head('/datastreams/', respond);
 
-server.get('/datastreams/:name', respond);
-server.head('/datastreams/:name', respond);
+server.get('/datastreams/:name', getDatastream);
 
 /* is this correct? posting to a resource? or does post then redirect to
 the newly created resource? */
@@ -39,28 +38,29 @@ function createDatastream(req, res, next) {
 	console.log( req.body );
 
 	var obj = {
-		data_fetch_method: 'POST' || req.body.data_fetch_method
-		//what-to-submit: 'POST' || req.body.data_fetch_method
-		/*
-			what-to-submit: location | time | username
-			update-interval:
-				what is the expected update-interval, in
-				which the hocu should check again?
-				only required for data-fetch-method == GET
-			nominal-range: e.g. -100 ... 100
-			nominal-type: float | int 
-			nominal-description: string (eur, usd)
-			value: ...
-			description: ...
-			*/
+		  data_fetch_method: req.body.data_fetch_method
+		, what_to_submit: req.body.what_to_submit
+		, update_interval: req.body.update_interval
+		, nominal_range: req.body.nominal_range
+		, nominal_type: req.body.nominal_type
+		, nominal_description: req.body.nominal_description
+		, description: req.body.description
 	};
-	datastreams.push(obj);
+	datastreams[req.params.name] = obj;
 	res.send('created ' + req.params.name + "\n" +  obj.data_fetch_method );
 	next();
 }
 
+function getDatastream(req, res, next) {
+	console.log( JSON.stringify(datastreams, null, "\t") );
+	res.send( JSON.stringify(datastreams[req.params.name], null, "\t") );
+	next();
+}
+
+
 function updateDatastream(req, res, next) {
-	res.send('created ' + req.params.name);
+	datastreams[req.params.name].value = req.body.value;
+	res.send( datastreams[req.params.name] );
 	next();
 }
 

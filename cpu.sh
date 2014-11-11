@@ -1,8 +1,10 @@
 #!/bin/ksh
+# Usage: ./cpu-usage.sh {create|delete|update} 
 
 SOCU_URI="http://localhost:8080"
 SOCU_DATASTREAM_NAME="cpu-usage-michi"
 SOCU_RESOURCE="$SOCU_URI/datastreams/$SOCU_DATASTREAM_NAME"
+UPDATE_INTERVAL=1
 
 # create datastream
 curl 	\
@@ -12,7 +14,12 @@ curl 	\
 	-d @- \
 	$SOCU_RESOURCE <<EOF
 	{
-		"foo": true
+		  "value": 0.0
+		, "data_fetch_method": "GET"
+		, "update_interval": $(($UPDATE_INTERVAL * 1000))
+		, "nominal_range": [0, 100]
+		, "nominal_type": "float"
+		, "description": "CPU usage, Michi"
 	} 
 EOF
 
