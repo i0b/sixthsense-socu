@@ -1,4 +1,6 @@
-sixthsense-socu
-===============
+# SixthSense SOCU
 
-SixthSense: repository for server centralized organization of data
+This repository contains a reference implementation of the SixthSense REST
+API, which specifies the communication of the Higher-Order Control Unit
+(e.g. a Smartphone) with the Lower-Order Control Uni (e.g. an Arduino).
+
