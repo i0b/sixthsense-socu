@@ -1,0 +1,10 @@
+{
+  "author": "Michael Mueller <michael-4.mueller@uni-ulm.de>",
+  "name": "sixthsense-socu",
+  "version": "0.0.1",
+  "private": true,
+
+  "dependencies": {
+    "restify": "2.x"
+  }
+}
