@@ -79,6 +79,6 @@ function updateDatastream(req, res, next) {
 }
 
 function deleteDatastream(req, res, next) {
-	res.send('created ' + req.params.name);
+	res.send(404);
 	next();
 }

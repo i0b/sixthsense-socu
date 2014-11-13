@@ -10,22 +10,22 @@
 #	delete datastream
 #	/bin/ksh cpu.sh -d
 #
-#	update the stream in a while-true loop using 1sec sleeps
+#	update the stream in a while-true loop using one second sleeps 
 #	/bin/ksh cpu.sh -l
 
 socu_uri="http://localhost:8080"
 socu_datastream_name="cpu-usage-example"
-socu_resource="$socu_uri/datastreams/$socu_datastream_name"
 update_interval=1
 
 prog=${0##*/}
-while getopts :cdlgu: c
+while getopts :cdlgu:s: c
 do 	
 	case $c in
 		c)  create=1;;
 		d)  delete=1;;
 		g)  get=1;;
 		u)  update=$OPTARG;;
+		s)  socu_uri=$OPTARG;;
 		l)  loop=1;;
 		:)  print -u2 "$prog: $OPTARG requires a value"
 		    exit 2;;
@@ -35,6 +35,9 @@ do
 	esac
 done
 shift $((OPTIND-1))
+
+socu_resource="$socu_uri/datastreams/$socu_datastream_name"
+print "$socu_resource"
 
 if [ "$create" == 1 ] ; then
 	curl 	\
@@ -58,11 +61,11 @@ EOF
 fi
 
 if [ "$delete" == 1 ] ; then
-	curl -X DELETE $socu_resource 
+	curl -i -X DELETE $socu_resource 
 fi
 
 if [ "$get" == 1 ] ; then
-	curl -X GET $socu_resource | python -mjson.tool
+	curl -v -i -X GET $socu_resource | python -mjson.tool
 fi
 
 if [ "${update:-unset}" != "unset" ] ; then
