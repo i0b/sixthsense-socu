@@ -1,22 +1,35 @@
 var restify = require('restify');
 var datastreams = {};
+var socu_uri = process.env.SOCU_URI || "http://localhost:8080";
 
-var server = restify.createServer();
+var server = restify.createServer({
+	formatters: {
+		'application/json': myCustomFormatJSON
+	}
+});
 server.use(restify.bodyParser());
 server.pre(restify.pre.userAgentConnection());
 
-server.get('/', respond);
-server.head('/', respond);
+server.get('/', redirect);
+server.head('/', redirect);
 
-server.get('/datastreams/', respond);
-server.head('/datastreams/', respond);
+function redirect(req, res, next) {
+	res.header('Location', '/api/v1');
+	res.send(302);
+}
 
-server.get('/datastreams/:name', getDatastream);
-server.head('/datastreams/:name', getDatastream);
+server.get('/api/v1', respond);
+server.head('/api/v1', respond);
 
-server.post('/datastreams/:name', createDatastream);
-server.put('/datastreams/:name', updateDatastream);
-server.del('/datastreams/:name', deleteDatastream);
+server.get('/api/v1/datastreams/', respond);
+server.head('/api/v1/datastreams/', respond);
+
+server.get('/api/v1/datastreams/:name', getDatastream);
+server.head('/api/v1/datastreams/:name', getDatastream);
+
+server.post('/api/v1/datastreams/:name', createDatastream);
+server.put('/api/v1/datastreams/:name', updateDatastream);
+server.del('/api/v1/datastreams/:name', deleteDatastream);
 
 server.listen(process.env.PORT || 8080, function() {
 	console.log('%s listening at %s', server.name, server.url);
@@ -24,18 +37,23 @@ server.listen(process.env.PORT || 8080, function() {
 
 function respond(req, res, next) {
 	var obj = {
-		  datastreams: {}
-		, documentation: "https://github.com/sixthsenseproject/docu"
-		, api_version: "0.1"
+		  datastreams: []
+		, documentation: "https://github.com/i0b/docu"
+		, api_version: "1"
 		, socu_name: "exemplary-socu"
-		, socu_description: "Exemplary SOCU using the code from "
-			+ "https://github.com/sixthsenseproject/socu."
+		, socu_description: "Demo instance of the SixthSense SOCU"
+			+ " code from https://github.com/i0b/socu."
 	};
 
 	for (var d in datastreams) {
-		var foo = datastreams[d];
-		foo.href = "/datastreams/" + d;
-		obj.datastreams[d] = foo;
+		var datastream_obj = datastreams[d];
+		datastream_obj.name = d;
+		datastream_obj.links = [{
+			  rel: "self"
+			, href: socu_uri + "/datastreams/" + d
+		}];
+
+		obj.datastreams.push(datastream_obj);
 	}
 
 	res.json(obj);
@@ -81,4 +99,38 @@ function updateDatastream(req, res, next) {
 function deleteDatastream(req, res, next) {
 	res.send(404);
 	next();
+}
+
+
+function myCustomFormatJSON(req, res, body) {
+  if (!body) {
+    if (res.getHeader('Content-Length') === undefined &&
+        res.contentLength === undefined) {
+      res.setHeader('Content-Length', 0);
+    }
+    return null;
+  }
+
+  if (body instanceof Error) {
+    // snoop for RestError or HttpError, but don't rely on instanceof
+    if ((body.restCode || body.httpCode) && body.body) {
+      body = body.body;
+    } else {
+      body = {
+        message: body.message
+      };
+    }
+  }
+
+  if (Buffer.isBuffer(body))
+    body = body.toString('base64');
+
+  var data = JSON.stringify(body, null, 2);
+
+  if (res.getHeader('Content-Length') === undefined &&
+      res.contentLength === undefined) {
+    res.setHeader('Content-Length', Buffer.byteLength(data));
+  }
+
+  return data;
 }

@@ -13,7 +13,7 @@
 #	update the stream in a while-true loop using one second sleeps 
 #	/bin/ksh cpu.sh -l
 
-socu_uri="http://localhost:8080"
+socu_uri="http://localhost:8080/api/v1/"
 socu_datastream_name="cpu-usage-example"
 update_interval=1
 
@@ -36,7 +36,7 @@ do
 done
 shift $((OPTIND-1))
 
-socu_resource="$socu_uri/datastreams/$socu_datastream_name"
+socu_resource="${socu_uri}datastreams/$socu_datastream_name"
 print "$socu_resource"
 
 if [ "$create" == 1 ] ; then
@@ -62,13 +62,11 @@ fi
 
 if [ "$delete" == 1 ] ; then
 	curl -i -X DELETE $socu_resource 
-fi
 
-if [ "$get" == 1 ] ; then
-	curl -v -i -X GET $socu_resource | python -mjson.tool
-fi
+elif [ "$get" == 1 ] ; then
+	curl -i -X GET "$socu_resource" 
 
-if [ "${update:-unset}" != "unset" ] ; then
+elif [ "${update:-unset}" != "unset" ] ; then
 	print "updating"
 	print '{ "value": ' ${update} ' }' | \
 	curl \
@@ -76,14 +74,17 @@ if [ "${update:-unset}" != "unset" ] ; then
 		-X PUT \
 		-H "Content-Type:application/json" \
 		-d @- "$socu_resource"
-fi
 
-if [ "$loop" == 1 ] ; then
+elif [ "$loop" == 1 ] ; then
 	while true; do
 		sleep 1;
-		cpu_usage=$( top -b -n1 | grep "Cpu(s)" | awk '{print $2 + $4}' )
-		d=$(date)
-		print "${cpu_usage} usage at ${d}\n"
+		if [ "$(uname)" == "OpenBSD" ] ; then
+			cpu_usage=$( top -n1 | grep "CPUs" | awk '{ print $3+$5+$7+$9 }' )
+		else
+			cpu_usage=$( top -b -n1 | grep "Cpu(s)" | awk '{print $2 + $4}' )
+		fi
+
+		print "${cpu_usage} usage at $(date)\n"
 
 		print '{ "value": ' ${cpu_usage} ' }' | \
 		curl \
