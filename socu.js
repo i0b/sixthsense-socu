@@ -34,6 +34,7 @@ function respond(req, res, next) {
 	next();
 }
 
+/* check if already exists, throw error */
 function createDatastream(req, res, next) {
 	console.log( req.body );
 
@@ -45,6 +46,9 @@ function createDatastream(req, res, next) {
 		, nominal_type: req.body.nominal_type
 		, nominal_description: req.body.nominal_description
 		, description: req.body.description
+
+		, recommended_nominal_mapping_range: req.body.recommended_nominal_mapping_range
+		, recommended_stimulation: req.body.recommended_stimulation
 	};
 	datastreams[req.params.name] = obj;
 	res.send('created ' + req.params.name + "\n" +  obj.data_fetch_method );
@@ -57,7 +61,7 @@ function getDatastream(req, res, next) {
 	next();
 }
 
-
+/* this should update the whole object, not just the value */
 function updateDatastream(req, res, next) {
 	datastreams[req.params.name].value = req.body.value;
 	res.send( datastreams[req.params.name] );

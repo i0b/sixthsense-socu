@@ -7,13 +7,14 @@ socu_resource="$socu_uri/datastreams/$socu_datastream_name"
 update_interval=1
 
 prog=${0##*/}
-while getopts :cdlu: c
+while getopts :cdlgu: c
 do 	
 	case $c in
 		c)  create=1;;
 		d)  delete=1;;
-		l)  loop=1;;
+		g)  get=1;;
 		u)  update=$OPTARG;;
+		l)  loop=1;;
 		:)  print -u2 "$prog: $OPTARG requires a value"
 		    exit 2;;
 		\?) print -u2 "$prog: unknown option $OPTARG"
@@ -38,6 +39,8 @@ if [ "$create" == 1 ] ; then
 			, "nominal_range": [0, 100]
 			, "nominal_type": "float"
 			, "description": "CPU usage, Michi"
+			, "recommended_nominal_mapping_range": [0, 10]
+			, "recommended_stimulation": "vibration"
 		} 
 EOF
 fi
@@ -45,6 +48,10 @@ fi
 if [ "$delete" == 1 ] ; then
 	print "deleting resource"
 	curl -v -X DELETE $socu_resource 
+fi
+
+if [ "$get" == 1 ] ; then
+	curl -X GET $socu_resource | python -mjson.tool
 fi
 
 if [ "${update:-unset}" != "unset" ] ; then
@@ -58,14 +65,16 @@ if [ "${update:-unset}" != "unset" ] ; then
 fi
 
 if [ "$loop" == 1 ] ; then
-	print "loop"
 	while true; do
+		sleep 1;
 		cpu_usage=$( top -b -n1 | grep "Cpu(s)" | awk '{print $2 + $4}' )
+		d=$(date)
+		print "${cpu_usage} usage at ${d}\n"
+
 		print '{ "value": ' ${cpu_usage} ' }' | \
 		curl \
-			-v -X PUT \
+			-X PUT \
 			-H "Content-Type:application/json" \
 			-d @- "$socu_resource"  
-		sleep 1;
 	done
 fi
