@@ -1,8 +1,20 @@
 #!/bin/ksh
-# Usage: ./cpu-usage.sh {create|delete|update} 
+# This script demonstrates the usage of the SixthSense REST API.
+# Usage:
+# 	create a datastream 'cpu-usage-example' at the endpoint
+#	/bin/ksh cpu.sh -c 
+#
+#	update the datastream with value '55.5'
+#	/bin/ksh cpu.sh -u 55.5
+#
+#	delete datastream
+#	/bin/ksh cpu.sh -d
+#
+#	update the stream in a while-true loop using 1sec sleeps
+#	/bin/ksh cpu.sh -l
 
 socu_uri="http://localhost:8080"
-socu_datastream_name="cpu-usage-michi"
+socu_datastream_name="cpu-usage-example"
 socu_resource="$socu_uri/datastreams/$socu_datastream_name"
 update_interval=1
 
@@ -25,15 +37,14 @@ done
 shift $((OPTIND-1))
 
 if [ "$create" == 1 ] ; then
-	print "creating resource"
 	curl 	\
-		-v \
+		-i \
 		-X POST \
 		-H "Content-Type:application/json" \
 		-d @- \
 		$socu_resource <<EOF
 		{
-			  "value": 0.0
+			  "value": null
 			, "data_fetch_method": "GET"
 			, "update_interval": $(($update_interval * 1000))
 			, "nominal_range": [0, 100]
@@ -41,13 +52,13 @@ if [ "$create" == 1 ] ; then
 			, "description": "CPU usage, Michi"
 			, "recommended_nominal_mapping_range": [0, 10]
 			, "recommended_stimulation": "vibration"
+			, "default_value": 0.0
 		} 
 EOF
 fi
 
 if [ "$delete" == 1 ] ; then
-	print "deleting resource"
-	curl -v -X DELETE $socu_resource 
+	curl -X DELETE $socu_resource 
 fi
 
 if [ "$get" == 1 ] ; then
