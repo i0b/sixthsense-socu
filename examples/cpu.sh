@@ -10,7 +10,7 @@
 #	delete datastream
 #	/bin/ksh cpu.sh -d
 #
-#	update the stream in a while-true loop using one second sleeps 
+#	update the stream in a while-true loop using ten second sleeps 
 #	/bin/ksh cpu.sh -l
 
 socu_uri="http://localhost:8080/api/v1/"
@@ -52,7 +52,8 @@ if [ "$create" == 1 ] ; then
 			, "update_interval": $(($update_interval * 1000))
 			, "nominal_range": [0, 100]
 			, "nominal_type": "float"
-			, "description": "CPU usage, Michi"
+			, "description": 
+				"Demo CPU usage, updated each ten seconds."
 			, "recommended_nominal_mapping_range": [0, 10]
 			, "recommended_stimulation": "vibration"
 			, "default_value": 0.0
@@ -67,17 +68,15 @@ elif [ "$get" == 1 ] ; then
 	curl -i -X GET "$socu_resource" 
 
 elif [ "${update:-unset}" != "unset" ] ; then
-	print "updating"
 	print '{ "value": ' ${update} ' }' | \
-	curl \
-		-i \
-		-X PUT \
-		-H "Content-Type:application/json" \
-		-d @- "$socu_resource"
+		curl \
+			-i \
+			-X PUT \
+			-H "Content-Type:application/json" \
+			-d @- "$socu_resource"
 
 elif [ "$loop" == 1 ] ; then
 	while true; do
-		sleep 1;
 		if [ "$(uname)" == "OpenBSD" ] ; then
 			cpu_usage=$( top -n1 | grep "CPUs" | awk '{ print $3+$5+$7+$9 }' )
 		else
@@ -87,9 +86,12 @@ elif [ "$loop" == 1 ] ; then
 		print "${cpu_usage} usage at $(date)\n"
 
 		print '{ "value": ' ${cpu_usage} ' }' | \
-		curl \
-			-X PUT \
-			-H "Content-Type:application/json" \
-			-d @- "$socu_resource"  
+			curl \
+				-s \
+				-X PUT \
+				-H "Content-Type:application/json" \
+				-d @- "$socu_resource" \
+				> /dev/null
+		sleep 10;
 	done
 fi

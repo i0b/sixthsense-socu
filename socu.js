@@ -39,7 +39,7 @@ function respond(req, res, next) {
 	var obj = {
 		  datastreams: []
 		, documentation: "https://github.com/i0b/docu"
-		, api_version: "1"
+		, api_version: 1
 		, socu_name: "exemplary-socu"
 		, socu_description: "Demo instance of the SixthSense SOCU"
 			+ " code from https://github.com/i0b/socu."
@@ -79,6 +79,9 @@ function createDatastream(req, res, next) {
 
 		, recommended_nominal_mapping_range: req.body.recommended_nominal_mapping_range
 		, recommended_stimulation: req.body.recommended_stimulation
+
+		, created_at: (new Date()).getTime()
+		, last_updated: null
 	};
 	datastreams[req.params.name] = obj;
 	res.send(201, datastreams[req.params.name]);
@@ -92,6 +95,7 @@ function getDatastream(req, res, next) {
 
 function updateDatastream(req, res, next) {
 	datastreams[req.params.name].value = req.body.value;
+	datastreams[req.params.name].last_updated = (new Date()).getTime();
 	res.json(datastreams[req.params.name]);
 	next();
 }
