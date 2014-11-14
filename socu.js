@@ -1,6 +1,6 @@
 var restify = require('restify');
 var datastreams = {};
-var socu_uri = process.env.SOCU_URI || "http://localhost:8080";
+var socu_uri = process.env.SOCU_URI || "http://localhost:8080/api/v1/";
 
 var server = restify.createServer({
 	formatters: {
@@ -50,7 +50,7 @@ function respond(req, res, next) {
 		datastream_obj.name = d;
 		datastream_obj.links = [{
 			  rel: "self"
-			, href: socu_uri + "/datastreams/" + d
+			, href: socu_uri + "datastreams/" + d
 		}];
 
 		obj.datastreams.push(datastream_obj);
