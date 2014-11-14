@@ -49,8 +49,8 @@ if [ "$create" == 1 ] ; then
 		{
 			  "value": null
 			, "data_fetch_method": "GET"
-			, "update_interval": $(($update_interval * 1000))
-			, "nominal_range": [0, 100]
+			, "update_interval": $(($update_interval * 100))
+			, "nominal_range": [0, 1]
 			, "nominal_type": "float"
 			, "description": 
 				"Maximum amplitude of Michis line-in sound."
