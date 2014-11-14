@@ -8,8 +8,12 @@ API, which specifies the communication of the Higher-Order Control Unit
  * No authorization is implemented -- Administrator party, everybody can
    read/write everything
 
+Here is an example of how to start the SOCU:
+
 	export SOCU_URI="http://socu.creal.de/api/v1/"
 	node socu.js
+
+In a separate Shell session:
 
 	/bin/ksh cpu.sh -c -s $SOCU_URI
 	/bin/ksh cpu.sh -l -s $SOCU_URI
