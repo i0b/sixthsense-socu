@@ -12,6 +12,24 @@
 #
 #	update the stream in a while-true loop using ten second sleeps 
 #	/bin/ksh sound.sh -l
+#
+# Depends on sox, arecord.
+
+if type sox &>/dev/null
+then
+	print "Found sox."
+else
+	print -u2 "This script depends on sox."
+	exit 2
+fi
+
+if type arecord &>/dev/null
+then
+	print "Found arecord."
+else
+	print -u2 "This script depends on arecord."
+	exit 2
+fi
 
 socu_uri="http://localhost:8080/api/v1/"
 socu_datastream_name="sound"
