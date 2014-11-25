@@ -47,16 +47,19 @@ if [ "$create" == 1 ] ; then
 		-d @- \
 		$socu_resource <<EOF
 		{
-			  "value": null
-			, "data_fetch_method": "GET"
-			, "update_interval": $(($update_interval * 1000))
-			, "nominal_range": [0, 100]
-			, "nominal_type": "float"
-			, "description": 
+			  "description": 
 				"Demo CPU usage, updated each ten seconds."
-			, "recommended_nominal_mapping_range": [0, 10]
-			, "recommended_stimulation": "vibration"
+			, "name": "cpu-usage"
+			, "data_fetch_method": "GET"
+			, "what_to_submit": null
+			, "update_interval": $(($update_interval * 1000))
+
+			, "value": null
 			, "default_value": 0.0
+			, "nominal_range": [0, 100]
+			, "nominal_description": "%"
+			, "recommended_nominal_mapping_range": [0, 10]
+			, "recommended_stimulations": [ "vibration", "thermal" ]
 		} 
 EOF
 fi

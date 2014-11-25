@@ -9,7 +9,9 @@ var server = restify.createServer({
 });
 server.use(restify.bodyParser());
 server.pre(restify.pre.userAgentConnection());
-server.pre(restify.pre.sanitizePath()); /* for the routes: '/foo/' is handled as '/foo' */
+
+/* for the routes: '/foo/' should be handled as '/foo' */
+server.pre(restify.pre.sanitizePath()); 
 
 server.get('/', redirect);
 server.head('/', redirect);
@@ -39,11 +41,11 @@ server.listen(process.env.PORT || 8080, function() {
 function respond(req, res, next) {
 	var obj = {
 		  datastreams: []
-		, documentation: "https://github.com/i0b/docu"
+		, documentation: "https://github.com/i0b/sixthsense-docu"
 		, api_version: 1
 		, socu_name: "exemplary-socu"
 		, socu_description: "Demo instance of the SixthSense SOCU"
-			+ " code from https://github.com/i0b/socu."
+			+ " code from https://github.com/i0b/sixthsen-socu."
 	};
 
 	for (var d in datastreams) {
@@ -71,16 +73,16 @@ function createDatastream(req, res, next) {
 		  data_fetch_method: req.body.data_fetch_method
 		, what_to_submit: req.body.what_to_submit
 		, update_interval: req.body.update_interval
-		, nominal_range: req.body.nominal_range
-		, nominal_type: req.body.nominal_type
-		, nominal_description: req.body.nominal_description
-		, description: req.body.description
+
 		, value: req.body.value
 		, default_value: req.body.default_value
+		, nominal_range: req.body.nominal_range
+		, nominal_description: req.body.nominal_description
 
 		, recommended_nominal_mapping_range: req.body.recommended_nominal_mapping_range
-		, recommended_stimulation: req.body.recommended_stimulation
+		, recommended_stimulations: req.body.recommended_stimulations
 
+		, description: req.body.description
 		, created_at: (new Date()).getTime()
 		, last_updated: null
 	};

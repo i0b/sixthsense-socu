@@ -65,16 +65,19 @@ if [ "$create" == 1 ] ; then
 		-d @- \
 		$socu_resource <<EOF
 		{
-			  "value": null
-			, "data_fetch_method": "GET"
-			, "update_interval": $(($update_interval * 100))
-			, "nominal_range": [0, 1]
-			, "nominal_type": "float"
-			, "description": 
+			  "description": 
 				"Maximum amplitude of Michis line-in sound."
-			, "recommended_nominal_mapping_range": [0, 10]
-			, "recommended_stimulation": "vibration"
+			, "name": "sound"
+			, "data_fetch_method": "GET"
+			, "what_to_submit": null
+			, "update_interval": $(($update_interval * 100))
+
+			, "value": null
 			, "default_value": 0.0
+			, "nominal_range": [0, 1]
+			, "nominal_description": null
+			, "recommended_nominal_mapping_range": [0, 10]
+			, "recommended_stimulations": [ "vibration" ]
 		} 
 EOF
 fi
