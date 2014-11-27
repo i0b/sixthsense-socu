@@ -99,7 +99,9 @@ elif [ "${update:-unset}" != "unset" ] ; then
 elif [ "$loop" == 1 ] ; then
 	while true; do
 		filename="/tmp/record_$$.wav"
-		arecord -d 1 "$filename"
+		arecord -d 0 "$filename" &
+		sleep 0.2
+		kill -9 $!
 		amplitude=$(sox "$filename" -n stat 2>&1 | grep "Maximum amplitude:" | awk -F " " '{ print $3 }')
 
 		print "${amplitude} usage at $(date)\n"
