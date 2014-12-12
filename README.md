@@ -48,6 +48,10 @@ Look for a line similar to `sink: 0 <alsa_output.pci-0000_00_1b.0.analog-stereo>
 	parec -d alsa_output.pci-0000_00_1b.0.analog-stereo.monitor > /tmp/raw.raw
 
 
+## ToDos
+
+ * add field `timeout_if_last_updated_longer_ago_than`
+
 
 ## License
 
