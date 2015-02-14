@@ -93,7 +93,11 @@ function createDatastream(req, res, next) {
 }
 
 function getDatastream(req, res, next) {
-	res.json(datastreams[req.params.name]);
+	if (datastreams[req.params.name]) {
+		res.json(datastreams[req.params.name]);
+	} else {
+		res.send(404);
+	}
 	next();
 }
 
@@ -120,6 +124,7 @@ function updateDatastream(req, res, next) {
 }
 
 function deleteDatastream(req, res, next) {
+	delete datastreams[req.params.name];
 	res.send(404);
 	next();
 }

@@ -32,6 +32,27 @@ There are more options (update to a value, delete a datastream, etc.)
 available. There are also more examples within the `examples/` folder.
 
 
+## How to get the sound example working
+
+Do you want to use the Internal Microphone of your Laptop? Then make sure
+no sound is playing and (in pavucontrol) that it gets enough input.
+
+Or do you want to use a song played by some application? In this case you
+should turn the Internal Microphone down to 0% (in pavucontrol). Then 
+
+	pacmd
+	list-sink-inputs
+
+Look for a line similar to `sink: 0 <alsa_output.pci-0000_00_1b.0.analog-stereo>`.
+
+	parec -d alsa_output.pci-0000_00_1b.0.analog-stereo.monitor > /tmp/raw.raw
+
+
+## ToDos
+
+ * add field `timeout_if_last_updated_longer_ago_than`
+
+
 ## License
 
 The project is licensed under the MIT license:
