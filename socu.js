@@ -1,6 +1,7 @@
 var restify = require('restify');
 var datastreams = {};
 var socu_uri = process.env.SOCU_URI || "http://localhost:8080/api/v1/";
+var fs = require("fs");
 
 var server = restify.createServer({
 	formatters: {
@@ -97,8 +98,23 @@ function getDatastream(req, res, next) {
 }
 
 function updateDatastream(req, res, next) {
-	datastreams[req.params.name].value = req.body.value;
+	//console.log(JSON.stringify(req.body, null, 2));
+	console.log("updating with " + req.body.value);
+
+	if (req.params.name === "location")
+		datastreams[req.params.name].value = JSON.parse(req.body.value);
+	else
+		datastreams[req.params.name].value = req.body.value;
+
 	datastreams[req.params.name].last_updated = (new Date()).getTime();
+	
+	var logLine = "" + 
+		datastreams[req.params.name].last_updated + ";" + 
+		datastreams[req.params.name].value + "\r\n"
+	fs.appendFile('/home/sixthsense/www/sixthsense-socu/log' + req.params.name + '.csv', logLine, function (err) {
+		console.err(JSON.stringify(err));
+	});
+
 	res.json(datastreams[req.params.name]);
 	next();
 }
