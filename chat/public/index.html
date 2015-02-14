@@ -1,0 +1,48 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <meta name="description" content="" />
+    <meta name="author" content="" />
+    <!--[if IE]>
+      <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+      <![endif]-->
+    <title>Sixth Sense Chat</title>
+      <!-- BOOTSTRAP CORE STYLE CSS -->
+    <link href="assets/css/bootstrap.css" rel="stylesheet" />
+  </head>
+
+  <body style="font-family:Verdana">
+    <div class="container">
+      <div class="row " style="padding-top:40px;">
+        <h3 class="text-center" >Sixth Sense Chat</h3>
+        <br /><br />
+        <div class="col-sm-12">
+          <div class="panel panel-info">
+            <div class="panel-heading">
+              Chat Log
+            </div>
+            <div class="panel-body">
+              <ul class="media-list">
+              </ul>
+            </div>
+
+            <div class="panel-footer">
+              <div class="input-group">
+                <input type="text" id="user" class="form-control" placeholder="username" />
+                <input type="text" id="message" class="form-control" placeholder="message" />
+                <span class="input-group-btn">
+                  <button id="send" class="btn btn-info" type="button">SEND</button>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+  <script src="https://code.jquery.com/jquery-1.11.2.min.js"></script>
+  <script src="https://cdn.socket.io/socket.io-1.3.3.js"></script>
+  <script src="js/script.js"></script>
+</html>
