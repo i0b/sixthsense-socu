@@ -83,6 +83,7 @@ function createDatastream(req, res, next) {
 		, recommended_nominal_mapping_range: req.body.recommended_nominal_mapping_range
 		, recommended_stimulations: req.body.recommended_stimulations
 
+		, name: req.body.name
 		, description: req.body.description
 		, created_at: (new Date()).getTime()
 		, last_updated: null
