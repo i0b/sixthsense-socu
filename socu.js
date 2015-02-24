@@ -95,7 +95,12 @@ function createDatastream(req, res, next) {
 
 function getDatastream(req, res, next) {
 	if (datastreams[req.params.name]) {
-		res.json(datastreams[req.params.name]);
+		var datastream_obj = datastreams[req.params.name];
+		datastream_obj.links = [{
+			  rel: "self"
+			, href: socu_uri + "datastreams/" + req.params.name
+		}];
+		res.json(datastream_obj);
 	} else {
 		res.send(404);
 	}
