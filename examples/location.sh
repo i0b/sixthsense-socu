@@ -49,7 +49,7 @@ if [ "$create" == 1 ] ; then
 		$socu_resource <<EOF
 		{
 			  "description": 
-				"Location data."
+				"Feel if someone is near you (GPS distance)."
 			, "name": "location"
 			, "data_fetch_method": "GET"
 			, "what_to_submit": null
